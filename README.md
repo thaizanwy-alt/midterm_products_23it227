@@ -103,8 +103,9 @@ Trên Chrome và LDPlayer9, mở danh sách rồi thử các bước sau.
 1. Cài [Firexport từ Chrome Web Store](https://chromewebstore.google.com/detail/firexport-firestore-expor/jffbbophhgjoholadeeehbkecddgajhc). Mở lại hoặc tải lại trang Firebase Console.
 2. Mở **thaivanquy-23it227-firebase → Firestore Database → Data → Query builder**.
 3. Chọn **Query scope → Collection**, nhập **Path** là `/products`, để trống bộ lọc và đặt **Limit** lớn hơn hoặc bằng số sản phẩm demo. Bấm **Run**.
-4. Trong **Results**, bấm **⋮** cạnh **Export → Export to JSON**. Đổi tên tệp tải về thành `23IT227_Products.json` và chép vào `submission/`.
-5. Mở tệp trong VS Code và kiểm tra số bản ghi khớp Results. Giữ Document ID ở phần định danh nếu Firexport có xuất kèm. Dữ liệu sản phẩm có `name` và `image` dạng chuỗi, `price` dạng số, `soluong` dạng số nguyên. Đối chiếu ảnh Base64 đầy đủ với giá trị Firestore hoặc giải mã lại để xác minh ảnh mở được.
+4. Trong **Results**, bấm **⋮** cạnh **Export → Export to JSON** và giữ tệp tải về để đối chiếu.
+5. Mở tệp và kiểm tra số bản ghi khớp Results. `Document ID` là định danh của bản ghi, còn dữ liệu sản phẩm có `name` và `image` dạng chuỗi, `price` dạng số, `soluong` dạng số nguyên.
+6. Nếu Firexport Basic báo **cells differ** và trường `image` có dòng **characters not shown**, vào **Panel view**, mở đúng Document ID và bấm **Copy this document as JSON**. Đối chiếu tên, giá và số lượng, rồi thay riêng giá trị `image` bị cắt bằng chuỗi đầy đủ của cùng document. Kiểm tra từng chuỗi khớp Firestore và giải mã ảnh thành công trước khi lưu tệp nộp ở `submission/23IT227_Products.json`.
 
 ### Ảnh minh chứng cần lưu trong `docs/screenshots/`
 
