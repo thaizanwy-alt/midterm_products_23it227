@@ -17,6 +17,8 @@ flutter run -d chrome --web-port=8080
 
 Mở LDPlayer9 hoặc thiết bị Android đã bật gỡ lỗi USB. Với LDPlayer9 trên máy kiểm thử, cổng ADB là `5555`. Dùng ID thực tế từ `flutter devices` nếu cổng khác.
 
+Project ở ổ D và bộ nhớ đệm Pub trên máy kiểm thử ở ổ C. `android/gradle.properties` tắt biên dịch gia tăng Kotlin để tránh lỗi đường dẫn giữa hai ổ khi Gradle biên dịch plugin.
+
 ```powershell
 adb connect 127.0.0.1:5555
 adb devices -l
@@ -37,6 +39,8 @@ dart pub global activate flutterfire_cli
 dart pub global run flutterfire_cli:flutterfire configure --project=thaivanquy-23it227-firebase --platforms=web,android --android-package-name=vn.edu.vku.midterm_products_23it227 --yes
 firebase.cmd deploy --only firestore --project thaivanquy-23it227-firebase
 ```
+
+Với Firebase CLI hỗ trợ cấu hình Authentication, lệnh `firebase.cmd deploy --only auth --project thaivanquy-23it227-firebase` bật Email/Password theo `firebase.json`. Tạo tài khoản admin trong Console nếu dùng một dự án mới.
 
 `firestore.rules` xác thực UID admin và kiểm tra đủ bốn trường đúng kiểu khi ghi. `firestore.indexes.json` bỏ chỉ mục của `image`, trường chỉ dùng để hiển thị. Danh sách lắng nghe `products` theo `name`.
 

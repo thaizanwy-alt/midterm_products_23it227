@@ -43,6 +43,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/.kotlin/
 
 # Tệp bàn giao và dữ liệu kiểm thử nằm ngoài lịch sử mã nguồn.
 /.local/
