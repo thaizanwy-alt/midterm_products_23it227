@@ -65,12 +65,26 @@ Firestore sinh Document ID khi thêm. Ứng dụng dùng ID này để sửa và
 | Điều hướng theo phiên admin | `lib/main.dart` → `_AuthGateState.build()` |
 | Đăng nhập, đăng xuất và kiểm tra UID | `lib/services/auth_service.dart` → `signIn()`, `signOut()`, `isAdmin()` |
 | Đọc và ghi đúng bốn trường | `lib/models/product.dart` → `Product.fromFirestore()`, `toFirestore()` |
-| Xem danh sách thời gian thực | `lib/services/product_service.dart` → `watchProducts()` |
+| Xem danh sách và chi tiết thời gian thực | `lib/services/product_service.dart` → `watchProducts()`, `watchProduct()` |
 | Thêm, sửa, xóa đúng document | `lib/services/product_service.dart` → `add()`, `update()`, `delete()` |
-| Xác nhận xóa và hiển thị danh sách | `lib/screens/product_list_screen.dart` → `_delete()`, `_row()` |
+| Xác nhận xóa và hiển thị danh sách | `lib/screens/product_list_screen.dart` → `_delete()`, `_ProductRow` |
+| Tìm tên không dấu, lọc tồn kho, sắp giá | `lib/models/inventory_view.dart` → `normalizeProductName()`, `browseProducts()` |
+| Tổng số mặt hàng, số lượng và giá trị tồn | `lib/models/inventory_view.dart` → `InventorySummary.fromProducts()` |
+| Nhãn tồn và trang chi tiết | `lib/widgets/inventory_widgets.dart` → `StockBadge`, `lib/screens/product_details_screen.dart` |
 | Chọn ảnh và thu nhỏ | `lib/screens/product_form_screen.dart` → `_pickImage()`, `_encodePhoto()` |
 | Kiểm tra và lưu form chung | `lib/screens/product_form_screen.dart` → `_parsePrice()`, `_parseQuantity()`, `_save()` |
 | Giải mã và hiển thị ảnh | `lib/widgets/product_image.dart` → `ProductImage.build()` |
+
+## Duyệt các chức năng nâng cao
+
+Trên Chrome và LDPlayer9, mở danh sách rồi thử các bước sau.
+
+1. Gõ `SO TAY` để tìm “Sổ tay bìa xanh”. Tạo một sản phẩm tạm có tên bắt đầu bằng “Đèn” và kiểm tra từ khóa `den`.
+2. Đặt một sản phẩm tạm về số lượng 0. Chọn **Hết hàng**, **Còn hàng** và **Tất cả** để đối chiếu. Mở sản phẩm đã sửa và kiểm tra nhãn khớp với nhãn trên danh sách.
+3. Dùng một từ khóa khớp nhiều sản phẩm. Kết hợp với bộ lọc tồn kho và đổi **Giá tăng dần** sang **Giá giảm dần**. Bấm **Đặt lại** để xóa từ khóa, chọn **Tất cả** và trở về thứ tự theo tên từ Firestore.
+4. Mở chi tiết bằng ảnh hoặc tên sản phẩm. Đối chiếu ảnh lớn, giá, số lượng và nhãn tồn.
+5. Kiểm tra số mặt hàng, tổng số lượng và tổng giá trị tồn trước và sau khi lọc. Thống kê tính theo toàn bộ kho và cập nhật sau khi lưu.
+6. Thu hẹp cửa sổ Chrome hoặc mở app trên LDPlayer9. Cuộn đến danh sách, mở form và thử nhập khi bàn phím đang hiện. Xóa các sản phẩm tạm sau khi duyệt.
 
 ## Kịch bản kiểm thử và quay demo
 

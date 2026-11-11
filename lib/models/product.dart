@@ -18,6 +18,8 @@ class Product {
   final int quantity;
   final String image;
 
+  bool get hasStock => quantity > 0;
+
   // Document ID nằm ngoài dữ liệu. Giá có thể là số nguyên hoặc số thực.
   factory Product.fromFirestore(String key, Map<String, dynamic> value) {
     final name = value['name'];

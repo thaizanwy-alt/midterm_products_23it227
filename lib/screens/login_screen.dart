@@ -82,22 +82,34 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.inventory_2_outlined,
-                                color: colors.primary,
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: const Color(0xff103d34),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.inventory_2_outlined,
+                                    color: Colors.white,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Flexible(
+                                    child: Text(
+                                      'Kho sản phẩm',
+                                      style: theme.textTheme.titleMedium
+                                          ?.copyWith(color: Colors.white),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 10),
-                              Text(
-                                'Kho sản phẩm',
-                                style: theme.textTheme.titleMedium,
-                              ),
-                            ],
+                            ),
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 24),
                           Text(
-                            'Đăng nhập admin',
+                            'Đăng nhập quản trị',
                             style: theme.textTheme.headlineSmall,
                           ),
                           const SizedBox(height: 22),
@@ -109,6 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             autofillHints: const [AutofillHints.username],
                             decoration: const InputDecoration(
                               labelText: 'Email',
+                              prefixIcon: Icon(Icons.mail_outline_rounded),
                             ),
                             validator: (value) =>
                                 value == null ||
@@ -128,6 +141,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             onFieldSubmitted: (_) => _signIn(),
                             decoration: InputDecoration(
                               labelText: 'Mật khẩu',
+                              prefixIcon: const Icon(
+                                Icons.lock_outline_rounded,
+                              ),
                               suffixIcon: IconButton(
                                 tooltip: _hidePassword
                                     ? 'Hiện mật khẩu'
@@ -150,9 +166,18 @@ class _LoginScreenState extends State<LoginScreen> {
                             const SizedBox(height: 12),
                             Semantics(
                               liveRegion: true,
-                              child: Text(
-                                error,
-                                style: TextStyle(color: colors.error),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: colors.errorContainer,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.all(12),
+                                child: Text(
+                                  error,
+                                  style: TextStyle(
+                                    color: colors.onErrorContainer,
+                                  ),
+                                ),
                               ),
                             ),
                           ],

@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../models/product.dart';
 import '../services/product_service.dart';
+import '../widgets/inventory_widgets.dart';
 import '../widgets/product_image.dart';
 
 const _maxSourceBytes = 10 * 1024 * 1024;
@@ -92,6 +93,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   // Android mở trình chọn ảnh của thiết bị. Web mở hộp thoại chọn tệp.
   Future<void> _pickImage() async {
     if (_picking || _saving) return;
+    FocusManager.instance.primaryFocus?.unfocus();
     setState(() {
       _picking = true;
       _imageError = null;
@@ -181,82 +183,90 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final imagePanel = Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text('Ảnh sản phẩm', style: theme.textTheme.titleMedium),
-        const SizedBox(height: 12),
-        AspectRatio(
-          aspectRatio: 4 / 3,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(14),
-            child: ProductImage(encoded: _image, fit: BoxFit.contain),
+    final imagePanel = _FormPanel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text('Ảnh sản phẩm', style: theme.textTheme.titleMedium),
+          const SizedBox(height: 12),
+          AspectRatio(
+            aspectRatio: 4 / 3,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: ColoredBox(
+                color: theme.colorScheme.surfaceContainerLow,
+                child: ProductImage(encoded: _image, fit: BoxFit.contain),
+              ),
+            ),
           ),
-        ),
-        const SizedBox(height: 12),
-        OutlinedButton.icon(
-          onPressed: _picking || _saving ? null : _pickImage,
-          icon: const Icon(Icons.add_photo_alternate_outlined),
-          label: Text(
-            _picking
-                ? 'Đang đọc ảnh…'
-                : _image == null
-                ? 'Chọn ảnh'
-                : 'Đổi ảnh',
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: _picking || _saving ? null : _pickImage,
+            icon: const Icon(Icons.add_photo_alternate_outlined),
+            label: Text(
+              _picking
+                  ? 'Đang đọc ảnh…'
+                  : _image == null
+                  ? 'Chọn ảnh'
+                  : 'Đổi ảnh',
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          _imageError ?? 'JPEG hoặc PNG, tối đa 10 MB trước khi thu nhỏ.',
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: _imageError == null
-                ? theme.colorScheme.onSurfaceVariant
-                : theme.colorScheme.error,
+          const SizedBox(height: 8),
+          Text(
+            _imageError ?? 'JPEG hoặc PNG, tối đa 10 MB trước khi thu nhỏ.',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: _imageError == null
+                  ? theme.colorScheme.onSurfaceVariant
+                  : theme.colorScheme.error,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
-    final fields = Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text('Thông tin sản phẩm', style: theme.textTheme.titleMedium),
-        const SizedBox(height: 12),
-        TextFormField(
-          controller: _name,
-          enabled: !_saving,
-          maxLength: Product.maxNameLength,
-          textInputAction: TextInputAction.next,
-          decoration: const InputDecoration(labelText: 'Tên sản phẩm'),
-          validator: (value) => value == null || value.trim().isEmpty
-              ? 'Hãy nhập tên sản phẩm.'
-              : null,
-        ),
-        const SizedBox(height: 10),
-        TextFormField(
-          controller: _price,
-          enabled: !_saving,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          textInputAction: TextInputAction.next,
-          decoration: const InputDecoration(
-            labelText: 'Giá',
-            suffixText: 'đ',
-            helperText: 'Ví dụ 120000 hoặc 120000,50',
+    final fields = _FormPanel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text('Thông tin sản phẩm', style: theme.textTheme.titleMedium),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: _name,
+            enabled: !_saving,
+            maxLength: Product.maxNameLength,
+            textInputAction: TextInputAction.next,
+            decoration: const InputDecoration(labelText: 'Tên sản phẩm'),
+            validator: (value) => value == null || value.trim().isEmpty
+                ? 'Hãy nhập tên sản phẩm.'
+                : null,
           ),
-          validator: (value) => _parsePrice(value ?? '') == null
-              ? 'Nhập giá từ 0 đến 999999999999, tối đa 2 số lẻ.'
-              : null,
-        ),
-        const SizedBox(height: 14),
-        TextFormField(
-          controller: _quantity,
-          enabled: !_saving,
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(labelText: 'Số lượng'),
-          validator: (value) => _parseQuantity(value ?? '') == null
-              ? 'Nhập số nguyên từ 0 đến 2147483647.'
-              : null,
-        ),
-      ],
+          const SizedBox(height: 10),
+          TextFormField(
+            controller: _price,
+            enabled: !_saving,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            textInputAction: TextInputAction.next,
+            decoration: const InputDecoration(
+              labelText: 'Giá',
+              suffixText: 'đ',
+              helperText: 'Ví dụ 120000 hoặc 120000,50',
+            ),
+            validator: (value) => _parsePrice(value ?? '') == null
+                ? 'Nhập giá từ 0 đến 999999999999, tối đa 2 số lẻ.'
+                : null,
+          ),
+          const SizedBox(height: 14),
+          TextFormField(
+            controller: _quantity,
+            enabled: !_saving,
+            keyboardType: TextInputType.number,
+            textInputAction: TextInputAction.done,
+            decoration: const InputDecoration(labelText: 'Số lượng'),
+            validator: (value) => _parseQuantity(value ?? '') == null
+                ? 'Nhập số nguyên từ 0 đến 2147483647.'
+                : null,
+          ),
+        ],
+      ),
     );
     final saveAction = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -280,24 +290,25 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     );
     return Scaffold(
       appBar: AppBar(
+        leading: const InventoryBackButton(),
         title: Text(widget.product == null ? 'Thêm sản phẩm' : 'Sửa sản phẩm'),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 30, 20, 40),
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 32),
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 880),
+              constraints: const BoxConstraints(maxWidth: 980),
               child: Form(
                 key: _formKey,
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    if (constraints.maxWidth >= 650) {
+                    if (constraints.maxWidth >= 680) {
                       return Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(child: imagePanel),
-                          const SizedBox(width: 34),
+                          const SizedBox(width: 20),
                           Expanded(
                             child: Column(children: [fields, saveAction]),
                           ),
@@ -305,9 +316,10 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                       );
                     }
                     return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         fields,
-                        const SizedBox(height: 26),
+                        const SizedBox(height: 16),
                         imagePanel,
                         saveAction,
                       ],
@@ -319,6 +331,26 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _FormPanel extends StatelessWidget {
+  const _FormPanel({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        border: Border.all(color: colors.outlineVariant),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: child,
     );
   }
 }

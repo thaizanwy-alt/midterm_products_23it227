@@ -18,6 +18,13 @@ class ProductService {
             .toList(growable: false);
       });
 
+  // Trang chi tiết theo dõi đúng tài liệu khi kho cập nhật từ thiết bị khác.
+  Stream<Product?> watchProduct(String key) =>
+      _products.doc(key).snapshots().map((snapshot) {
+        final data = snapshot.data();
+        return data == null ? null : Product.fromFirestore(snapshot.id, data);
+      });
+
   // add() để Firestore tạo Document ID tự động, bên ngoài bốn trường dữ liệu.
   Future<void> add(Product product) async {
     await _products.add(product.toFirestore());

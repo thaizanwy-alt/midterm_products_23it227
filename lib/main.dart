@@ -35,15 +35,18 @@ class ProductsApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const background = Color(0xfff4f7f5);
-    const ink = Color(0xff172b28);
-    final colors = ColorScheme.fromSeed(seedColor: const Color(0xff146657))
-        .copyWith(
-          primary: const Color(0xff146657),
-          secondaryContainer: const Color(0xffdfeee6),
-          onSurface: ink,
-          surface: Colors.white,
-        );
+    const background = Color(0xfff4f7f6);
+    const ink = Color(0xff183029);
+    const primary = Color(0xff176552);
+    final colors = ColorScheme.fromSeed(seedColor: primary).copyWith(
+      primary: primary,
+      secondaryContainer: const Color(0xffe4eee9),
+      surfaceContainerLow: const Color(0xffedf3f0),
+      outline: const Color(0xff809589),
+      outlineVariant: const Color(0xffd5e1da),
+      onSurface: ink,
+      surface: Colors.white,
+    );
     final shape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10),
     );
@@ -58,6 +61,10 @@ class ProductsApp extends StatelessWidget {
         useMaterial3: true,
         colorScheme: colors,
         scaffoldBackgroundColor: background,
+        dialogTheme: const DialogThemeData(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+        ),
         textTheme: text.copyWith(
           headlineSmall: text.headlineSmall?.copyWith(
             fontWeight: FontWeight.w700,
@@ -69,11 +76,16 @@ class ProductsApp extends StatelessWidget {
           backgroundColor: Colors.white,
           foregroundColor: ink,
           scrolledUnderElevation: 0,
+          shape: Border(bottom: BorderSide(color: Color(0xffd5e1da))),
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: Colors.white,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: colors.outline),
+          ),
         ),
         filledButtonTheme: FilledButtonThemeData(
           style: FilledButton.styleFrom(
