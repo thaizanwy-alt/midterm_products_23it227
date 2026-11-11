@@ -240,35 +240,6 @@ class _InventoryContentState extends State<_InventoryContent> {
         _search.text.isNotEmpty ||
         _stock != StockFilter.all ||
         _order != PriceOrder.original;
-    final search = TextField(
-      controller: _search,
-      textInputAction: TextInputAction.search,
-      onChanged: (_) => setState(() {}),
-      onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
-      decoration: const InputDecoration(
-        labelText: 'Tìm tên sản phẩm',
-        prefixIcon: Icon(Icons.search_rounded),
-      ),
-    );
-    final stock = _InventoryChoice(
-      title: 'Tồn kho',
-      value: _stock,
-      values: StockFilter.values,
-      label: (value) => value.label,
-      onChanged: (value) => setState(() => _stock = value),
-    );
-    final order = _InventoryChoice(
-      title: 'Sắp xếp',
-      value: _order,
-      values: PriceOrder.values,
-      label: (value) => value.label,
-      onChanged: (value) => setState(() => _order = value),
-    );
-    final reset = TextButton.icon(
-      onPressed: hasFilters ? _reset : null,
-      icon: const Icon(Icons.restart_alt_rounded),
-      label: const Text('Đặt lại'),
-    );
     return Align(
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
@@ -304,34 +275,22 @@ class _InventoryContentState extends State<_InventoryContent> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 14),
-                        if (wide)
-                          Row(
-                            children: [
-                              Expanded(flex: 3, child: search),
-                              const SizedBox(width: 12),
-                              Expanded(flex: 2, child: stock),
-                              const SizedBox(width: 12),
-                              Expanded(flex: 2, child: order),
-                              const SizedBox(width: 8),
-                              reset,
-                            ],
-                          )
-                        else
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              search,
-                              const SizedBox(height: 10),
-                              stock,
-                              const SizedBox(height: 10),
-                              order,
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: reset,
-                              ),
-                            ],
-                          ),
+                        const SizedBox(height: 12),
+                        _InventoryToolbar(
+                          wide: wide,
+                          search: _search,
+                          stock: _stock,
+                          order: _order,
+                          onSearchChanged: (_) => setState(() {}),
+                          onClearSearch: _search.text.isEmpty
+                              ? null
+                              : () => setState(_search.clear),
+                          onStockChanged: (value) =>
+                              setState(() => _stock = value),
+                          onOrderChanged: (value) =>
+                              setState(() => _order = value),
+                          onReset: hasFilters ? _reset : null,
+                        ),
                         if (hasFilters &&
                             products.length != widget.products.length)
                           Padding(
@@ -344,7 +303,7 @@ class _InventoryContentState extends State<_InventoryContent> {
                               ),
                             ),
                           ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8),
                         if (wide && products.isNotEmpty)
                           DecoratedBox(
                             decoration: BoxDecoration(
@@ -427,38 +386,164 @@ class _InventoryContentState extends State<_InventoryContent> {
   }
 }
 
-class _InventoryChoice<T> extends StatelessWidget {
-  const _InventoryChoice({
-    required this.title,
-    required this.value,
-    required this.values,
-    required this.label,
-    required this.onChanged,
+class _InventoryToolbar extends StatelessWidget {
+  const _InventoryToolbar({
+    required this.wide,
+    required this.search,
+    required this.stock,
+    required this.order,
+    required this.onSearchChanged,
+    required this.onClearSearch,
+    required this.onStockChanged,
+    required this.onOrderChanged,
+    required this.onReset,
   });
 
-  final String title;
-  final T value;
-  final List<T> values;
-  final String Function(T) label;
-  final ValueChanged<T> onChanged;
+  final bool wide;
+  final TextEditingController search;
+  final StockFilter stock;
+  final PriceOrder order;
+  final ValueChanged<String> onSearchChanged;
+  final VoidCallback? onClearSearch;
+  final ValueChanged<StockFilter> onStockChanged;
+  final ValueChanged<PriceOrder> onOrderChanged;
+  final VoidCallback? onReset;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    const pill = BorderRadius.all(Radius.circular(24));
+    final searchField = SizedBox(
+      height: 48,
+      child: TextField(
+        controller: search,
+        textInputAction: TextInputAction.search,
+        onChanged: onSearchChanged,
+        onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+        decoration: InputDecoration(
+          labelText: 'Tìm tên sản phẩm',
+          floatingLabelBehavior: FloatingLabelBehavior.never,
+          isDense: true,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: pill,
+            borderSide: BorderSide(color: colors.outline),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: pill,
+            borderSide: BorderSide(color: colors.primary, width: 2),
+          ),
+          prefixIcon: const Icon(Icons.search_rounded, size: 20),
+          prefixIconConstraints: const BoxConstraints(
+            minWidth: 44,
+            minHeight: 48,
+          ),
+          suffixIcon: onClearSearch == null
+              ? null
+              : IconButton(
+                  tooltip: 'Xóa từ khóa',
+                  onPressed: onClearSearch,
+                  icon: const Icon(Icons.close_rounded, size: 20),
+                ),
+        ),
+      ),
+    );
+    final stockFilter = _StockChoice(value: stock, onChanged: onStockChanged);
+    final sorted = order != PriceOrder.original;
+    final sort = SizedBox.square(
+      dimension: 48,
+      child: PopupMenuButton<PriceOrder>(
+        tooltip: 'Sắp xếp theo giá: ${order.label}',
+        icon: const Icon(Icons.sort_rounded, size: 22),
+        position: PopupMenuPosition.under,
+        style: IconButton.styleFrom(
+          backgroundColor: sorted ? colors.secondaryContainer : colors.surface,
+          foregroundColor: sorted
+              ? colors.onSecondaryContainer
+              : colors.onSurfaceVariant,
+          side: BorderSide(color: sorted ? colors.primary : colors.outline),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        onSelected: onOrderChanged,
+        itemBuilder: (context) => [
+          for (final option in PriceOrder.values)
+            CheckedPopupMenuItem(
+              value: option,
+              checked: order == option,
+              child: Text(option.label),
+            ),
+        ],
+      ),
+    );
+    final reset = TextButton.icon(
+      onPressed: onReset,
+      icon: const Icon(Icons.restart_alt_rounded),
+      label: const Text('Đặt lại'),
+    );
+
+    // Keep a tap on a toolbar control from dismissing the search keyboard
+    // before the control can handle the tap.
+    return TextFieldTapRegion(
+      child: wide
+          ? Row(
+              children: [
+                SizedBox(width: 352, child: searchField),
+                const SizedBox(width: 12),
+                SizedBox(width: 188, child: stockFilter),
+                const Spacer(),
+                reset,
+                const SizedBox(width: 8),
+                sort,
+              ],
+            )
+          : Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(child: searchField),
+                    const SizedBox(width: 8),
+                    sort,
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(child: stockFilter),
+                    const SizedBox(width: 8),
+                    reset,
+                  ],
+                ),
+              ],
+            ),
+    );
+  }
+}
+
+class _StockChoice extends StatelessWidget {
+  const _StockChoice({required this.value, required this.onChanged});
+
+  final StockFilter value;
+  final ValueChanged<StockFilter> onChanged;
 
   @override
   Widget build(BuildContext context) {
     return InputDecorator(
-      decoration: InputDecoration(
-        labelText: title,
+      decoration: const InputDecoration(
+        labelText: 'Tồn kho',
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+        contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 2),
       ),
       child: DropdownButtonHideUnderline(
-        child: DropdownButton<T>(
+        child: DropdownButton<StockFilter>(
           value: value,
           isExpanded: true,
           borderRadius: BorderRadius.circular(12),
           icon: const Icon(Icons.expand_more_rounded),
           items: [
-            for (final option in values)
-              DropdownMenuItem(value: option, child: Text(label(option))),
+            for (final option in StockFilter.values)
+              DropdownMenuItem(value: option, child: Text(option.label)),
           ],
           onChanged: (value) {
             if (value != null) onChanged(value);
