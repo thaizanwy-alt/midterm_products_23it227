@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "857332470151",
+    "project_id": "thaivanquy-23it227-firebase",
+    "storage_bucket": "thaivanquy-23it227-firebase.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:857332470151:android:eea3e92e0c171f0ec40322",
+        "android_client_info": {
+          "package_name": "vn.edu.vku.midterm_products_23it227"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFmEY2JPLqkx6dkDKq9M3q9Hl-pLyZTi4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

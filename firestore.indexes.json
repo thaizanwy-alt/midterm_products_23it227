@@ -1,0 +1,6 @@
+{
+  "indexes": [],
+  "fieldOverrides": [
+    { "collectionGroup": "products", "fieldPath": "image", "indexes": [] }
+  ]
+}
