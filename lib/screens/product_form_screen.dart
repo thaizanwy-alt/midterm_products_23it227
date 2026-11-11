@@ -293,38 +293,42 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         leading: const InventoryBackButton(),
         title: Text(widget.product == null ? 'Thêm sản phẩm' : 'Sửa sản phẩm'),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 24, 16, 32),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 980),
-              child: Form(
-                key: _formKey,
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    if (constraints.maxWidth >= 680) {
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+      // Giữ tiêu điểm khi cuộn trong form, kể cả vuốt bằng chuột trên LDPlayer.
+      body: TextFieldTapRegion(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+            padding: const EdgeInsets.fromLTRB(16, 24, 16, 32),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 980),
+                child: Form(
+                  key: _formKey,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth >= 680) {
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(child: imagePanel),
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: Column(children: [fields, saveAction]),
+                            ),
+                          ],
+                        );
+                      }
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Expanded(child: imagePanel),
-                          const SizedBox(width: 20),
-                          Expanded(
-                            child: Column(children: [fields, saveAction]),
-                          ),
+                          fields,
+                          const SizedBox(height: 16),
+                          imagePanel,
+                          saveAction,
                         ],
                       );
-                    }
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        fields,
-                        const SizedBox(height: 16),
-                        imagePanel,
-                        saveAction,
-                      ],
-                    );
-                  },
+                    },
+                  ),
                 ),
               ),
             ),
